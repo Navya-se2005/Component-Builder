@@ -29,7 +29,7 @@ return (
             variant="outline"
             size="sm"
             onClick={()=>onSelect(item.value)}
-            className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+            className="border-gray-200 text-gray-600 bg-white hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-colors duration-200 rounded-lg text-xs">
                 {item.label}
             </Button>
         ))}
