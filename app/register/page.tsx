@@ -1,114 +1,180 @@
-"use client"
-import { motion } from "framer-motion"
-import { useState } from "react"
+'use client';
+import { useState, ChangeEvent, FormEvent, ReactNode } from 'react';
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, ArrowRight, Sparkles } from "lucide-react"
-import Link from "next/link"
+import Image from 'next/image';
+import {
+  Ripple,
+  AuthTabs,
+  TechOrbitDisplay,
+} from '@/components/ui/modern-animated-sign-in';
 
+type FormData = {
+  name: string;
+  email: string;
+  password: string;
+};
 
-export default function RegisterPage(){
-      const router = useRouter()
-  const [showPassword, setShowPassword] = useState(false)
-  const [form, setForm] = useState({ name: "", email: "", password: "" })
-  const [loading, setLoading] = useState(false)
-  return(
-    <main className="min-h-screen bg-black flex items-center justify-center px-4 relative overflow-hidden">
-        <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-violet-600/20 blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-[-100px] left-1/2 -translate-x-1/2 w-[400px] h-[300px] bg-cyan-600/20 blur-[120px] rounded-full pointer-events-none" />
-     <motion.div
-      className="w-full max-w-md"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-     >
-        <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-white font-semibold text-lg">Component Builder</span>
-            </div>
-            <h1 className="text-2xl font-bold text-white mb-1">Create an Account</h1>
-            <p className="text-gray-400 text-sm">Start building beautiful components today</p>
+interface OrbitIcon {
+  component: () => ReactNode;
+  className: string;
+  duration?: number;
+  delay?: number;
+  radius?: number;
+  path?: boolean;
+  reverse?: boolean;
+}
+
+const iconsArray: OrbitIcon[] = [
+  {
+    component: () => (
+      <Image
+        width={100}
+        height={100}
+        src='https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg'
+        alt='HTML5'
+      />
+    ),
+    className: 'size-[30px] border-none bg-transparent',
+    duration: 20,
+    delay: 20,
+    radius: 100,
+    path: false,
+    reverse: false,
+  },
+  {
+    component: () => (
+      <Image
+        width={100}
+        height={100}
+        src='https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg'
+        alt='TypeScript'
+      />
+    ),
+    className: 'size-[50px] border-none bg-transparent',
+    radius: 210,
+    duration: 20,
+    path: false,
+    reverse: false,
+  },
+  {
+    component: () => (
+      <Image
+        width={100}
+        height={100}
+        src='https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg'
+        alt='TailwindCSS'
+      />
+    ),
+    className: 'size-[30px] border-none bg-transparent',
+    duration: 20,
+    delay: 20,
+    radius: 150,
+    path: false,
+    reverse: true,
+  },
+  {
+    component: () => (
+      <Image
+        width={100}
+        height={100}
+        src='https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg'
+        alt='React'
+      />
+    ),
+    className: 'size-[50px] border-none bg-transparent',
+    radius: 270,
+    duration: 20,
+    path: false,
+    reverse: true,
+  },
+];
+
+export default function RegisterPage() {
+  const router = useRouter()
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    password: '',
+  });
+
+  const goToLogin = (
+    event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => {
+    event.preventDefault();
+    router.push("/login");
+  };
+
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    name: keyof FormData
+  ) => {
+    const value = event.target.value;
+
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log('Account created', formData);
+    await new Promise(r => setTimeout(r, 800));
+    router.push("/app");
+  };
+
+  const formFields = {
+    header: 'Create account',
+    subHeader: 'Start building with AI today',
+    fields: [
+      {
+        label: 'Name',
+        required: true,
+        type: 'text' as const,
+        placeholder: 'Enter your full name',
+        onChange: (event: ChangeEvent<HTMLInputElement>) =>
+          handleInputChange(event, 'name'),
+      },
+      {
+        label: 'Email',
+        required: true,
+        type: 'email' as const,
+        placeholder: 'Enter your email address',
+        onChange: (event: ChangeEvent<HTMLInputElement>) =>
+          handleInputChange(event, 'email'),
+      },
+      {
+        label: 'Password',
+        required: true,
+        type: 'password' as const,
+        placeholder: 'Enter a strong password',
+        onChange: (event: ChangeEvent<HTMLInputElement>) =>
+          handleInputChange(event, 'password'),
+      },
+    ],
+    submitButton: 'Create account',
+    textVariantButton: 'Already have an account? Sign in',
+  };
+
+  return (
+    <main className="min-h-screen bg-black overflow-hidden">
+      <section className='flex max-lg:justify-center'>
+        <div className='flex flex-col justify-center w-1/2 max-lg:hidden relative min-h-screen'>
+          <Ripple mainCircleSize={100} />
+          <TechOrbitDisplay iconsArray={iconsArray} text="Join" />
         </div>
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
-            <form
-            className="space-y-5"
-            onSubmit={async (e) => {
-                e.preventDefault()
-                 setLoading(true)
-                 await new Promise(r => setTimeout(r, 1000))
-                 router.push("/app")
-            }}
-            >
-          <div className="space-y-1.5">
-            <label className="text-sm text-gray-300 font-medium">Full Name</label>
-            <input type="text" placeholder="Your Name" value={form.name}
-            onChange={e => setForm({...form, name: e.target.value})}
-            required
-             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all"/>
+
+        {/* Right Side - Pastel Pink Form Container */}
+        <div className='w-full lg:w-1/2 h-[100dvh] flex flex-col justify-center items-center px-6 lg:px-20 bg-[#FFD1DC] text-slate-900'>
+          <div className="w-full max-w-[400px]">
+            <AuthTabs
+              formFields={formFields}
+              goTo={goToLogin}
+              handleSubmit={handleSubmit}
+            />
           </div>
-          <div className="space-y-1.5">
-              <label className="text-sm text-gray-300 font-medium">Email</label>
-              <input
-                type="email"
-                placeholder="yourmail@ex.com"
-                value={form.email}
-                onChange={e => setForm({ ...form, email: e.target.value })}
-                required
-                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all"
-              />
-            </div>
-               <div className="space-y-1.5">
-              <label className="text-sm text-gray-300 font-medium">Password</label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Min. 8 characters"
-                  value={form.password}
-                  onChange={e => setForm({ ...form, password: e.target.value })}
-                  required
-                  minLength={8}
-                  className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all pr-10"
-                />
-                 <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-              <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-violet-500 rounded-xl text-white font-semibold text-sm hover:opacity-90 hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
-            >
-              {loading ? (
-                <>
-                  <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                  </svg>
-                  Creating account...
-                </>
-              ) : (
-                <>
-                  Create Account
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-            </form>
-            <div className="mt-6 text-center text-sm text-gray-400">
-            Already have an account?{" "}
-            <Link href="/login" className="text-violet-400 hover:text-violet-300 font-medium transition-colors">
-              Sign in
-            </Link>
-          </div> 
         </div>
-     </motion.div>
+      </section>
     </main>
-  )
+  );
 }
